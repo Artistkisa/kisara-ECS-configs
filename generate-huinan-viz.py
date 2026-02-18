@@ -96,7 +96,21 @@ def generate_html(data):
     
     for i, r in enumerate(recent_records):
         try:
-            dt = datetime.fromisoformat(r.get("time", "").replace('Z', '+00:00').replace('+00:00', ''))
+            # 解析时间并转换为北京时间
+            dt_str = r.get("time", "")
+            if 'Z' in dt_str:
+                dt = datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+            elif '+' in dt_str:
+                dt = datetime.fromisoformat(dt_str)
+            else:
+                dt = datetime.fromisoformat(dt_str)
+            
+            # 转换为北京时间 (UTC+8)
+            from datetime import timezone, timedelta
+            beijing_tz = timezone(timedelta(hours=8))
+            dt = dt.astimezone(beijing_tz)
+            
+            labels.append(f"{dt.hour:02d}:{dt.minute:02d}")
             labels.append(f"{dt.hour:02d}:{dt.minute:02d}")
             humidity_data.append(r.get("humidity", 0))
             dew_data.append(r.get("dew", 0))
