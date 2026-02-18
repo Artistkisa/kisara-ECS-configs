@@ -12,6 +12,19 @@
 - **位置**: 阿里云上海
 - **状态**: 每小时运行回南天监测，推送到 GitHub
 
+**配置同步机制（重要！）**
+```
+主服务器修改配置
+    ↓ 每10分钟检测变更
+GitHub (kisara-ECS-configs 仓库)
+    ↓ 每10分钟拉取
+ECS 自动应用配置
+```
+- 主服务器脚本: `scripts/sync-configs-to-github.py`
+- ECS 脚本: `/opt/monitor/scripts/sync-configs-from-github.sh`
+- 同步文件: 回南天脚本、推送脚本、心跳脚本、文档等
+- 变更检测: MD5 哈希值比对
+
 **为什么重要：**
 - 分担了 720 次/月的 API 调用
 - 如果忘记它，会以为所有数据都来自主服务器
